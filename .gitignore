@@ -1,0 +1,10 @@
+.env
+media
+ecommerce/__pycache__
+ecommerce/migrations
+accounts/__pycache__
+accounts/migrations
+products/__pycache__
+products/migrations
+contact/__pycache__
+contact/migrations
