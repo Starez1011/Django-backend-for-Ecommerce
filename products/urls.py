@@ -11,5 +11,5 @@ urlpatterns = [
     path('category/',views.CategoryGetView.as_view()),
     path('category/create/',views.CategoryPostView.as_view()),
     path('category/delete/',views.CategoryDeleteView.as_view()),
-    path('category/update/',views.CategoryPutView.as_view())
+    path('category/update/',views.CategoryPutView.as_view()),
 ]

@@ -6,12 +6,13 @@ class UserSerializer(serializers.ModelSerializer):
     password1 = serializers.CharField(write_only=True)
     class Meta:
         model = User
-        fields = ['email', 'username', 'password', 'password1']
+        fields = ['email', 'firstname', 'lastname', 'password', 'password1']
 
     def create(self, validated_data):
         user = User.objects.create_user(
             email=validated_data['email'],
-            username=validated_data['username'],
+            firstname=validated_data['firstname'],
+            lastname=validated_data['lastname'],
             password=validated_data['password'],
         )
         user.is_active=False
