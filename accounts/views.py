@@ -26,7 +26,7 @@ class UserRegistrationView(APIView):
             user = serializer.create(serializer.validated_data)
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             token = default_token_generator.make_token(user)
-            activation_url = 'http://127.0.0.1:8000/api/account/user/activate/'+ uid + '/' + token
+            activation_url = 'http://127.0.0.1:8000/accounts/user/activate/'+ uid + '/' + token
             send_activation_email(user.email, activation_url)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
