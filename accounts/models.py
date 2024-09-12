@@ -42,8 +42,8 @@ class User(AbstractBaseUser):
         max_length=255,
         unique=True,
     )
-    firstname = models.CharField(max_length=100)
-    lastname = models.CharField(max_length=100)
+    firstname = models.CharField(max_length=100,null=True)
+    lastname = models.CharField(max_length=100,null=True)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
     is_normalusers=models.BooleanField(default=False)
