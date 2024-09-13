@@ -58,7 +58,6 @@ class UserLoginView(APIView):
             if user is not None:
                 if user.is_active:
                     login(request,user)
-                    set("email",user.email,timeout=86400)
                     token, created = Token.objects.get_or_create(user=user)
                     role=0
                     if user.is_admin or user.is_staffusers:
