@@ -14,6 +14,7 @@ from django.contrib.auth import authenticate, login, logout
 import random
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
+from accounts.mixins import IsAdminMixin
 # Create your views here.
 def custom_404(request, exception):
     return render(request, 'accounts/404.html',status=404)
@@ -66,7 +67,7 @@ class UserLoginView(APIView):
                 else:
                     return Response({'detail': 'Account not Activated.'}, status=status.HTTP_400_BAD_REQUEST)
 
-            return Response({'detail': 'Invalid Username or Password.'}, status=status.HTTP_400_BAD_REQUEST)   
+            return Response({'detail': 'Invalid Username or Password.'}, status=status.HTTP_404_NOT_FOUND)   
     
 class UserLogoutView(APIView):
     authentication_classes=[TokenAuthentication]
@@ -148,3 +149,55 @@ class UserChangePasswordView(APIView):
                 return Response({'message':'Password Changed Sucessfully'},status=status.HTTP_200_OK)
             return Response({'message':'OTP Experied'},status=status.HTTP_400_BAD_REQUEST)
         return Response({'message':'Error'},status=status.HTTP_400_BAD_REQUEST)
+
+#CRUD for Users
+class UserGetAllView(APIView,IsAdminMixin):
+    def get(self, request):
+        users = User.objects.all()
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class UserGetView(APIView,IsAdminMixin):
+    def get(self, request):
+        id = request.GET.get('id')
+        if id is None:
+            return Response({'error': 'Invalid ID'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            user = User.objects.get(id=id)
+            serializer = UserSerializer(user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+class UserDeleteView(APIView,IsAdminMixin):
+    def delete(self, request):
+        id = request.GET.get('id')
+        if id is None:
+            return Response({'error': 'Invalid ID'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            user = User.objects.get(id=id)
+            user.delete()
+            return Response({'info': 'User deleted'}, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+class UserPutView(APIView,IsAdminMixin):
+    def put(self, request):
+        id = request.data.get('id')
+        if id is None:
+            return Response({'error': 'Invalid ID'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            user = User.objects.get(id=id)
+            serializer = UserSerializer(user, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'info': 'User updated'}, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except User.DoesNotExist:
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+class UserPostView(APIView,IsAdminMixin):
+    def post(self, request):
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'info': 'User created'}, status= status.HTTP_201_CREATED)
+        return Response(serializer.errors, status= status.HTTP_400_BAD_REQUEST)
+    

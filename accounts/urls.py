@@ -9,4 +9,11 @@ urlpatterns = [
     path('user/send-otp',vw.UserSendOTPViews.as_view()),
     path('user/verify-otp',vw.UserVerifyOTPViews.as_view()),
     path('user/changepassword',vw.UserChangePasswordView.as_view()),    
+
+    #CRUD for Users
+    path('user/all',vw.UserGetAllView.as_view()),
+    path('user/get',vw.UserGetView.as_view()),
+    path('user/create',vw.UserPostView.as_view()),
+    path('user/update',vw.UserPutView.as_view()),
+    path('user/delete',vw.UserDeleteView.as_view()),
 ]

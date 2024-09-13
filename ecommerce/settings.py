@@ -49,7 +49,6 @@ INSTALLED_APPS = [
     'accounts',
     'products',
     'contact',
-    'admin_panel',
 ]
 
 

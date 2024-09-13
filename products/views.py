@@ -94,6 +94,6 @@ class ProductPutView(IsAdminMixin,IsStaffUsersMixin,APIView):
             if serializer.is_valid():
                 serializer.save()
                 return Response({'info': 'Product updated'}, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Product Update Invalid'}, status=status.HTTP_400_BAD_REQUEST)
         except Product.DoesNotExist:
             return Response({'error': 'Product not found'}, status=status.HTTP_404_NOT_FOUND)
