@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from accounts.mixins import IsAdminMixin, IsNormalUsersMixin, IsStaffUsersMixin
 
-class CategoryGetView(IsAdminMixin,IsStaffUsersMixin,APIView):
+class CategoryGetView(APIView):
     def get(self, request):
         categories = Category.objects.all()
         serializer = CategorySerializer(categories, many=True)
@@ -47,13 +47,24 @@ class CategoryPutView(IsAdminMixin,IsStaffUsersMixin,APIView):
         except Category.DoesNotExist:
             return Response({'error': 'Category not found'}, status=status.HTTP_404_NOT_FOUND)
         
-class ProductGetAllView(IsAdminMixin,IsStaffUsersMixin,APIView):
+class CategorywiseProductGetView(APIView):
+    def get(self, request):
+        try:
+            category = request.GET.get('categoryId')
+            if not category:
+                return Response({'error': 'Invalid ID'}, status=status.HTTP_400_BAD_REQUEST)
+            products = Product.objects.filter(category__id=category).order_by('-date_added')
+            serializer = ProductSerializer(products, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except:
+            return Response({'error': 'An error occurred while fetching category-wise products.'}, status=status.HTTP_400_BAD_REQUEST)
+class ProductGetAllView(APIView):
     def get(self, request):
         products = Product.objects.all()
         serializer = ProductSerializer(products, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
-class ProductGetView(IsAdminMixin,IsStaffUsersMixin,APIView):
+class ProductGetView(IsAdminMixin,IsStaffUsersMixin,IsNormalUsersMixin,APIView):
     def get(self, request):
         id = request.GET.get('id')
         if id is None:
@@ -95,5 +106,17 @@ class ProductPutView(IsAdminMixin,IsStaffUsersMixin,APIView):
                 serializer.save()
                 return Response({'info': 'Product updated'}, status=status.HTTP_200_OK)
             return Response({'error': 'Product Update Invalid'}, status=status.HTTP_400_BAD_REQUEST)
+        except Product.DoesNotExist:
+            return Response({'error': 'Product not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+class ProductSearchView(APIView):
+    def get(self, request):
+        try:
+            query = request.GET.get('query')
+            if query is None:
+                return Response({'error': 'Search parameter is missing.'}, status=status.HTTP_400_BAD_REQUEST)
+            products = Product.objects.filter(name__icontains=query).order_by('-date_added')
+            serializer = ProductSerializer(products, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         except Product.DoesNotExist:
             return Response({'error': 'Product not found'}, status=status.HTTP_404_NOT_FOUND)

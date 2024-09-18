@@ -7,7 +7,9 @@ urlpatterns = [
     path('product/update/',views.ProductPutView.as_view()),
     path('all-products/',views.ProductGetAllView.as_view()),
     path('products/',views.ProductGetView.as_view()),
+    path('product/search/',views.ProductSearchView.as_view()),
 
+    path('category/items/',views.CategorywiseProductGetView.as_view()),
     path('category/',views.CategoryGetView.as_view()),
     path('category/create/',views.CategoryPostView.as_view()),
     path('category/delete/',views.CategoryDeleteView.as_view()),

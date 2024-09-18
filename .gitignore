@@ -8,3 +8,5 @@ products/__pycache__
 products/migrations
 contact/__pycache__
 contact/migrations
+cart/__pycache__
+cart/migrations
